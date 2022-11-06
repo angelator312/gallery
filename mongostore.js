@@ -4,7 +4,7 @@ class Mongostore {
         this.kolekcia = kolekcia
     }
     async conect(urlforconnect){
-        const client = new MongoClient(urlforconnect);
+        const client = new MongoClient(urlforconnect??'mongodb://test:test@127.0.0.1/test');
         // Свързваме се със Mongo Сървъра
         await client.connect();
       
