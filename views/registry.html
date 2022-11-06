@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <%- include('_header.html') %>
     <form action="/registyrregistyr">
-        <ul>
-            <li><input class="username" placeholder="username" name="username" type="text"></li>
-            <li><input class="password" placeholder="password" name="password" type="password"></li>
-            <li><input class="password" placeholder="password2" name="password2" type="password"></li>
-            <li><input class="sibmit" type="submit"></li>
-        </ul>
+        <input class="username" placeholder="username" name="username" type="text"><br>
+        <input class="form-control" placeholder="password" name="password" type="password"><br>
+        <input class="form-control" placeholder="password2" name="password2" type="password"><br>
+        <input class="btn btn-primary" type="submit"><br>
     </form>
     <% if(yorn){ %>
         <p>
