@@ -3,8 +3,8 @@ class Mongostore {
     constructor(kolekcia) {
         this.kolekcia = kolekcia
     }
-    async conect(){
-        const client = new MongoClient('mongodb://test:test@127.0.0.1/test');
+    async conect(urlforconnect){
+        const client = new MongoClient(urlforconnect);
         // Свързваме се със Mongo Сървъра
         await client.connect();
       

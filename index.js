@@ -23,8 +23,8 @@ const port = process.env.PORT ?? 8080;
 const cookieage = 60000 * 30
 const session = new Mongostore('session.json');
 const registry = new Mongostore('registry.json');
-session.conect();
-registry.conect();
+session.conect(process.env.MONGO_URL);
+registry.conect(process.env.MONGO_URL);
 function proverka(file, cb) {
   fs.stat(`image/${file.originalname}`).then(() => {
     let nexte = file.originalname.substring(file.originalname.lastIndexOf('.'))
