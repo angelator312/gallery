@@ -1,7 +1,7 @@
 const {
   srandom
 } = require('./jsonwjs')
-const {Mongostore}=require('./mongostore')
+const { Mongostore } = require('./mongostore')
 const express = require('express');
 const path = require('path');
 const fs = require('fs/promises');
@@ -54,6 +54,9 @@ async function sendFile(path, res) {
 app.engine('.html', require('ejs').__express);
 // конфигурираме къде се намират файловете с темплейти
 app.set('views', templatePath);
+
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(cookieParser());
 // Конфигурираме  разширението по подразбиране за темплейтите
 app.set('view engine', '.html');
@@ -134,8 +137,12 @@ app.get('/loginregister2', async function (req, res) {
   }
 })
 app.get('/upload', function (req, res) {
-  res.render('upload', {
-  })
+  if (req.cookies.lognat) {
+    res.render('upload', {
+    })
+  } else {
+    res.redirect('/login')
+  }
 });
 app.post('/uploadimage', upload.single('myfile'), function (req, res, next) {
   res.redirect('/')
