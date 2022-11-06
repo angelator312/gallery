@@ -66,10 +66,7 @@ app.get('/', async function (req, res) {
       username: data.username
     });
   } else {
-    res.render('index', {
-      iList: imageList,
-      username: null
-    })
+    res.redirect('/login')
   }
 
 })
