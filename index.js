@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 })
 const templatePath = path.join(__dirname, 'views');
 const upload = multer({ dest: 'image/', storage });
-const port = 8080
+const port = process.env.PORT ?? 8080;
 const cookieage = 60000 * 30
 const session = new Mongostore('session.json');
 const registry = new Mongostore('registry.json');
