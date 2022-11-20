@@ -11,7 +11,13 @@ const sharp = require('sharp')
 const app = express();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'image')
+    if (req.cookies.lognat) {
+      session.getkey(req.cookies.lognat).then((data) => {
+        cb(null, 'image/' + data.username)
+      })
+    } else {
+      throw new Error('ne si lognat')
+    }
   },
   filename: function (req, file, cb) {
     proverka(file, cb)
@@ -32,9 +38,9 @@ function proverka(file, cb) {
     cb(null, newname)
   }).catch((err) => cb(null, file.originalname))
 }
-async function sendFile(path, res) {
+async function sendFile(path,res,user) {
   try {
-    const data = await fs.readFile(`image/${path}`)
+    const data = await fs.readFile(`image/${user}/${path}`)
     const image = await sharp(data)
       .composite([
         { input: 'aletter.jpg', gravity: 'northwest' }
@@ -61,9 +67,9 @@ app.use(cookieParser());
 // Конфигурираме  разширението по подразбиране за темплейтите
 app.set('view engine', '.html');
 app.get('/', async function (req, res) {
-  const imageList = (await fs.readdir(`${process.cwd()}/image`)).filter(t => t.endsWith('.jpg') || t.endsWith('.png'))
   if (req.cookies.lognat) {
     const data = await session.getkey(req.cookies.lognat)
+    const imageList = (await fs.readdir(`${process.cwd()}/image/`+data.username)).filter(t => t.endsWith('.jpg') || t.endsWith('.png'))
     res.render('index', {
       iList: imageList,
       username: data.username
@@ -79,6 +85,12 @@ app.get('/registyr', function (req, res) {
   })
 })
 app.get('/registyrregistyr', async function (req, res) {
+  if(await registry.getkey(req.query.username)){
+    res.render('registry', {
+      yorn: 'Има такъв user'
+    })
+    return
+  }
   if (req.query.password == req.query.password2) {
     let sid = srandom()
     await registry.addkey(req.query.username, {
@@ -90,9 +102,8 @@ app.get('/registyrregistyr', async function (req, res) {
       username: req.query.username,
       password: req.query.password
     })
+    fs.mkdir('image/'+ req.query.username)
     res.redirect('/')
-
-
   }
 })
 app.get('/login', function (req, res) {
@@ -151,13 +162,12 @@ app.get('/dregistyr', async function (req, res) {
   const key = (
     await session.getkey(req.cookies.lognat)
   ).username
-  registry.deletekey(key)
-  await session.deletekey(key)
-  res.clearCookie('lognat');
-  res.redirect('/')
+  fs.rm('image/'+key,{recursive: true})
+  await registry.deletekey(key)
+  res.redirect('/logout')
 })
-app.get('/:path?', function (req, res) {
-  sendFile(req.params.path, res)
+app.get('/image/:path?', async function (req, res) {
+  sendFile(req.params.path, res,(await session.getkey(req.cookies.lognat)).username)
 });
 app.listen(port, () => {
 
