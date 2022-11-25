@@ -1,0 +1,10 @@
+<%- include('_header.html') %>
+    <form id="deleteimage" action="/deleteimage" method="get">
+        <input type="text" name="myfile" /><br /><br />
+        <input type="submit" value="Delete image" name="submit"><br /><br />
+        <span id="status"></span>
+        <% if(yorn){ %>
+            <%= yorn %>     
+        <% }%>
+    </form>
+<%- include('_footer.html') %>
