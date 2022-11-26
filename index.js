@@ -77,7 +77,7 @@ app.get('/', async function (req, res) {
     } catch (error) {
       fs.mkdir(`image/${data.username}/`)
     }
-    const imageList = (await fs.readdir(`${process.cwd()}/image/` + data.username)).filter(t => t.endsWith('.jpg') || t.endsWith('.png'));
+    const imageList = (await fs.readdir(`${process.cwd()}/image/` + data.username)).filter(t => t.endsWith('.jpg') || t.endsWith('.png'))|| [];
     res.render('index', {
       iList: imageList,
       username: data.username
