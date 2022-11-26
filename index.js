@@ -72,6 +72,11 @@ app.set('view engine', '.html');
 app.get('/', async function (req, res) {
   if (req.cookies.lognat) {
     const data = await session.getkey(req.cookies.lognat);
+    try {
+      fs.stat(`image/${data.username}/`)
+    } catch (error) {
+      fs.mkdir(`image/${data.username}/`)
+    }
     const imageList = (await fs.readdir(`${process.cwd()}/image/` + data.username)).filter(t => t.endsWith('.jpg') || t.endsWith('.png'));
     res.render('index', {
       iList: imageList,
@@ -206,7 +211,17 @@ app.get('/deleteimage', async function (req, res) {
 });
 // разглеждане на снимки
 app.get('/image/:path?', async function (req, res) {
-  sendFile(req.params.path, res, (await session.getkey(req.cookies.lognat)).username)
+  const user=(await session.getkey(req.cookies.lognat)).username
+  if(!user){
+    res.redirect('/login');
+    return;
+  }
+  try {
+    fs.stat(`image/${user}/`)
+  } catch (error) {
+    fs.mkdir(`image/${user}/`)
+  }
+  sendFile(req.params.path, res,user)
 });
 app.listen(port, () => {
   console.log('Express server listening in port %s', port);
