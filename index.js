@@ -77,7 +77,7 @@ app.get('/', async function (req, res) {
     } catch (error) {
       await fs.mkdir(`image/${data.username}/`)
     }
-    const imageList = (await fs.readdir(`${process.cwd()}/image/` + data.username)).filter(t => t.endsWith('.jpg') || t.endsWith('.png'))|| [];
+    const imageList = (await fs.readdir(`${process.cwd()}/image/` + data.username)).filter(t => t.endsWith('.jpg') || t.endsWith('.png')) || [];
     res.render('index', {
       iList: imageList,
       username: data.username
@@ -170,9 +170,15 @@ app.get('/logout', async function (req, res) {
 
 });
 // качване на снимки
-app.get('/upload', function (req, res) {
+app.get('/upload', async function (req, res) {
   if (req.cookies.lognat) {
+    try {
+      await fs.stat(`image/${user}/`)
+    } catch (error) {
+      await fs.mkdir(`image/${user}/`)
+    }
     res.render('upload', {
+
     });
   } else {
     res.redirect('/login');
@@ -182,26 +188,32 @@ app.post('/uploadimage', upload.single('myfile'), function (req, res, next) {
   res.redirect('/');
 });
 // премахване на снимки
-app.get('/delimage', function (req, res) {
-  res.render('delimage', {
-    yorn: null
-  });
+app.get('/delimage', async function (req, res) {
+  if (req.cookies.lognat) {
+    try {
+      await fs.stat(`image/${user}/`)
+    } catch (error) {
+      await fs.mkdir(`image/${user}/`)
+    }
+    res.render('delimage', {
+      yorn: null
+    });
+  }
 });
 app.get('/deleteimage', async function (req, res) {
-  if([...req.query.myfile].some((v)=>{v='%'})){
+  if ([...req.query.myfile].some((v) => { v = '%' })) {
     res.redirect('/delimage');
     return;
   }
   try {
-    if(!await fs.stat('image/'+
-    (await session.getkey(req.cookies.lognat)).username+'/'
-    +req.query.myfile))
-    {
+    if (!await fs.stat('image/' +
+      (await session.getkey(req.cookies.lognat)).username + '/'
+      + req.query.myfile)) {
       throw new Error('');
     }
-    await fs.rm('image/'+
-    (await session.getkey(req.cookies.lognat)).username+'/'
-    +req.query.myfile);
+    await fs.rm('image/' +
+      (await session.getkey(req.cookies.lognat)).username + '/'
+      + req.query.myfile);
     res.redirect('/');
     return;
   } catch (error) {
@@ -211,17 +223,17 @@ app.get('/deleteimage', async function (req, res) {
 });
 // разглеждане на снимки
 app.get('/image/:path?', async function (req, res) {
-  const user=(await session.getkey(req.cookies.lognat)).username
-  if(!user){
+  const user = (await session.getkey(req.cookies.lognat)).username
+  if (!user) {
     res.redirect('/login');
     return;
   }
   try {
-    fs.stat(`image/${user}/`)
+    await fs.stat(`image/${user}/`)
   } catch (error) {
-    fs.mkdir(`image/${user}/`)
+    await fs.mkdir(`image/${user}/`)
   }
-  sendFile(req.params.path, res,user)
+  sendFile(req.params.path, res, user)
 });
 app.listen(port, () => {
   console.log('Express server listening in port %s', port);
