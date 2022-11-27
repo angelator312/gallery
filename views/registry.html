@@ -2,8 +2,8 @@
 <%- include('_header.html') %>
     <form action="/registyrregistyr">
         <input class="username" placeholder="username" name="username" type="text"><br>
-        <input class="form-control" placeholder="password" name="password" type="password"><br>
-        <input class="form-control" placeholder="password2" name="password2" type="password"><br>
+        <input class="form-control" placeholder="password" name="password" type="password" minlength="8"><br>
+        <input class="form-control" placeholder="password2" name="password2" type="password" minlength="8"><br>
         <input class="btn btn-primary" type="submit"><br>
     </form>
     <% if(yorn){ %>
