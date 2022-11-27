@@ -73,9 +73,9 @@ app.get('/', async function (req, res) {
   if (req.cookies.lognat) {
     const data = await session.getkey(req.cookies.lognat);
     try {
-      fs.stat(`image/${data.username}/`)
+      await fs.stat(`image/${data.username}/`)
     } catch (error) {
-      fs.mkdir(`image/${data.username}/`)
+      await fs.mkdir(`image/${data.username}/`)
     }
     const imageList = (await fs.readdir(`${process.cwd()}/image/` + data.username)).filter(t => t.endsWith('.jpg') || t.endsWith('.png'))|| [];
     res.render('index', {
