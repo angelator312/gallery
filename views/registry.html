@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <%- include('_header.html') %>
     <form action="/registyrregistyr">
-        <input class="username" placeholder="username" name="username" type="text"><br>
-        <input class="form-control" placeholder="password" name="password" type="password" minlength="8"><br>
-        <input class="form-control" placeholder="password2" name="password2" type="password" minlength="8"><br>
+        <input class="username" placeholder="username" name="username" type="text" required autocomplete="username"><br>
+        <input class="form-control" placeholder="password" name="password" type="password" minlength="8" required autocomplete="new-password"><br>
+        <input class="form-control" placeholder="password2" name="password2" type="password" minlength="8" required autocomplete="current-password"><br>
         <input class="btn btn-primary" type="submit"><br>
     </form>
     <% if(yorn){ %>
