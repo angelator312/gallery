@@ -108,7 +108,14 @@ app.get('/registyrregistyr', async function (req, res) {
     res.render('registry', {
       yorn: 'Има такъв user'
     });
-    return
+    return;
+  }
+  if(!req.query.username.match(/^[\w-]+$/g)){
+    res.render('registry', {
+      yorn: 'В user-а е разрешено само букви,цифри,подчертаващи и тирета'
+    });
+    return;
+
   }
   if (req.query.password == req.query.password2) {
     let sid = srandom();
