@@ -58,6 +58,14 @@ async function sendFile(path, res, user) {
     return res.end();
   }
 }
+async function dirpr(req) {
+  const user = (await session.getkey(req.cookies.lognat)).username
+  try {
+    await fs.stat(`image/${user}/`)
+  } catch (error) {
+    await fs.mkdir(`image/${user}/`)
+  }
+}
 // конфигурации
 app.engine('.html', require('ejs').__express);
 // конфигурираме къде се намират файловете с темплейти
@@ -72,11 +80,7 @@ app.set('view engine', '.html');
 app.get('/', async function (req, res) {
   if (req.cookies.lognat) {
     const data = await session.getkey(req.cookies.lognat);
-    try {
-      await fs.stat(`image/${data.username}/`)
-    } catch (error) {
-      await fs.mkdir(`image/${data.username}/`)
-    }
+    await dirpr(req);
     const imageList = (await fs.readdir(`${process.cwd()}/image/` + data.username)).filter(t => t.endsWith('.jpg') || t.endsWith('.png')) || [];
     res.render('index', {
       iList: imageList,
@@ -172,11 +176,7 @@ app.get('/logout', async function (req, res) {
 // качване на снимки
 app.get('/upload', async function (req, res) {
   if (req.cookies.lognat) {
-    try {
-      await fs.stat(`image/${user}/`)
-    } catch (error) {
-      await fs.mkdir(`image/${user}/`)
-    }
+    await dirpr(req);
     res.render('upload', {
 
     });
@@ -190,11 +190,7 @@ app.post('/uploadimage', upload.single('myfile'), function (req, res, next) {
 // премахване на снимки
 app.get('/delimage', async function (req, res) {
   if (req.cookies.lognat) {
-    try {
-      await fs.stat(`image/${user}/`)
-    } catch (error) {
-      await fs.mkdir(`image/${user}/`)
-    }
+    await dirpr(req);
     res.render('delimage', {
       yorn: null
     });
